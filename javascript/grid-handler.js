@@ -1,9 +1,8 @@
-// Grid functionality
 import { canvas, ctx, img, loadAndScaleImage, displayError } from './image-handler.js';
 
 /**
  * Draws a grid on the canvas based on user input
- * @returns {boolean} Success status of the operation
+ * @returns {boolean} True if grid was successfully drawn, false otherwise
  */
 function drawGrid() {
     const gridSizeInput = document.getElementById('gridSize');
@@ -43,6 +42,11 @@ function drawGrid() {
 
     const { width: scaledWidth, height: scaledHeight } = scaledDimensions;
 
+    // Clear the canvas before redrawing
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //redraw the image.
+    ctx.drawImage(img, 0, 0, scaledWidth, scaledHeight);
+
     // Calculate grid spacing
     const gridSizeX = scaledWidth / gridCount;
     const gridSizeY = scaledHeight / gridCount;
@@ -70,10 +74,18 @@ function drawGrid() {
     return true;
 }
 
-// This will remove the grid by just only redrawing the image
-function removeGrid() {
+/**
+ * Removes the grid overlay by redrawing image
+ * Uses the loadAndScaleImage function to refresh the canvas
+ */function removeGrid() {
     // just redraws the image without grid
     loadAndScaleImage();
 }
+
+document.getElementById('gridSize').addEventListener('input', drawGrid);
+
+document.getElementById('lineThickness').addEventListener('input', drawGrid);
+
+document.getElementById('gridColor').addEventListener('input', drawGrid);
 
 export { drawGrid, removeGrid };

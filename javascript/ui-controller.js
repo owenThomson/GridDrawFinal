@@ -1,21 +1,36 @@
-// UI Controller - Handles button interactions and UI state
-import { img, handleImageUpload, downloadImage } from './image-handler.js';
+import { img, handleImageUpload, downloadImage, loadAndScaleImage } from './image-handler.js';
 import { drawGrid, removeGrid } from './grid-handler.js';
+import { setupZoomAndPan } from './zoom-feature.js';
+import { updatePaperInstructions } from './paper-transport.js'; // Import the paper-transport functions
 
-// Wait for DOM to be fully loaded
+// Wait for DOM to be loaded
 document.addEventListener("DOMContentLoaded", function () {
     // Get UI elements
     const uploadInput = document.getElementById("upload");
     const applyGridBtn = document.getElementById("applyGridBtn");
     const removeGridBtn = document.getElementById("removeGridBtn");
     const downloadBtn = document.getElementById("downloadBtn");
+    const zoomSliderContainer = document.getElementById("zoomSliderContainer");
+    const resetZoomBtn = document.getElementById("resetZoomBtn");
 
-    // Create custom image upload handler to manage button states
+    // Setup zoom and pan functionality
+    const zoomController = setupZoomAndPan();
+
+    // Initially disable zoom until grid is applied
+    zoomController.setZoomEnabled(false);
+
+    // Create image upload handler to manage button states
     uploadInput.addEventListener("change", function (event) {
-        // Reset button states when a new image is uploaded
+        // Reset button states when new image is uploaded
         applyGridBtn.style.display = "block";
         removeGridBtn.style.display = "none";
         downloadBtn.style.display = "none";
+        zoomSliderContainer.style.display = "none";
+        resetZoomBtn.style.display = "none";
+
+        // Disable zoom functionality and reset zoom settings
+        zoomController.setZoomEnabled(false);
+        zoomController.resetZoom();
 
         // Then handle the image upload
         handleImageUpload(event);
@@ -24,21 +39,40 @@ document.addEventListener("DOMContentLoaded", function () {
     // Set up image onload event
     img.onload = function () {
         // Show the image on canvas when loaded
-        removeGrid(); // This will draw the image without grid
+        loadAndScaleImage(); // This will draw the image without grid
+
         // Reset UI to initial state with apply grid button showing
         applyGridBtn.style.display = "block";
         removeGridBtn.style.display = "none";
         downloadBtn.style.display = "none";
+        zoomSliderContainer.style.display = "none";
+        resetZoomBtn.style.display = "none";
+
+        // Disable zoom functionality
+        zoomController.setZoomEnabled(false);
+
         // Enable apply grid button when image is loaded
         applyGridBtn.disabled = false;
+
+        // Update paper instructions when image loads
+        updatePaperInstructions();
     };
 
-    // Remove onclick attributes from HTML and use proper event listeners
+    //event listeners
     applyGridBtn.addEventListener("click", function () {
         if (drawGrid()) {
+            // update the UI
             applyGridBtn.style.display = "none";
             removeGridBtn.style.display = "block";
             downloadBtn.style.display = "block";
+            zoomSliderContainer.style.display = "block";
+            resetZoomBtn.style.display = "none";
+
+            // enable zoom functionality
+            zoomController.setZoomEnabled(true);
+
+            // Update paper instructions when grid is applied
+            updatePaperInstructions();
         }
     });
 
@@ -47,17 +81,50 @@ document.addEventListener("DOMContentLoaded", function () {
         removeGridBtn.style.display = "none";
         downloadBtn.style.display = "none";
         applyGridBtn.style.display = "block";
+        zoomSliderContainer.style.display = "none";
+        resetZoomBtn.style.display = "none";
+
+        // Disable zoom functionality and reset zoom when removing grid
+        zoomController.setZoomEnabled(false);
+        zoomController.resetZoom();
+
+        // Update paper instructions when grid is removed
+        updatePaperInstructions();
+    });
+
+    document.getElementById('zoomSlider').addEventListener('input', function () {
+        resetZoomBtn.style.display = "block";
+    });
+
+    resetZoomBtn.addEventListener("click", function () {
+        zoomController.resetZoom();
+        drawGrid();
+        resetZoomBtn.style.display = "none";
     });
 
     downloadBtn.addEventListener("click", downloadImage);
 
-    // Initial UI state setup
+    // event listener for grid size changes so update paper instructions
+    document.getElementById('gridSize').addEventListener('input', function () {
+        // If the grid is visible, update the paper instructions
+        if (removeGridBtn.style.display === "block") {
+            updatePaperInstructions();
+        }
+    });
+
+    // Initial UI setup
     initializeUI();
 
-    // This will set up the initial UI State
+    /**
+     * Sets up the initial UI state when website loads
+     * Disables buttons that require an image to be loaded first
+     */
     function initializeUI() {
         applyGridBtn.disabled = !img.complete || !img.src;
         removeGridBtn.style.display = "none";
         downloadBtn.style.display = "none";
+        zoomSliderContainer.style.display = "none";
+        resetZoomBtn.style.display = "none";
+        zoomController.setZoomEnabled(false);
     }
 });
