@@ -77,15 +77,26 @@ function drawGrid() {
 /**
  * Removes the grid overlay by redrawing image
  * Uses the loadAndScaleImage function to refresh the canvas
- */function removeGrid() {
+ */
+function removeGrid() {
     // just redraws the image without grid
     loadAndScaleImage();
 }
 
-document.getElementById('gridSize').addEventListener('input', drawGrid);
+/**
+ * Conditionally updates the grid only if it's currently visible
+ * This prevents grid from being applied before the Apply Grid button is clicked
+ */
+function conditionallyUpdateGrid() {
+    // Only update grid if grid has been applied (Remove Grid button is visible)
+    if (document.getElementById('removeGridBtn').style.display === "block") {
+        drawGrid();
+    }
+}
 
-document.getElementById('lineThickness').addEventListener('input', drawGrid);
-
-document.getElementById('gridColor').addEventListener('input', drawGrid);
+// Attach event listeners to grid controls using the conditional function
+document.getElementById('gridSize').addEventListener('input', conditionallyUpdateGrid);
+document.getElementById('lineThickness').addEventListener('input', conditionallyUpdateGrid);
+document.getElementById('gridColor').addEventListener('input', conditionallyUpdateGrid);
 
 export { drawGrid, removeGrid };
