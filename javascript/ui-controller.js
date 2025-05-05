@@ -1,7 +1,9 @@
-import { img, handleImageUpload, downloadImage, loadAndScaleImage } from './image-handler.js';
+import { img, canvas, ctx, handleImageUpload, setImageFromUrl, downloadImage, loadAndScaleImage } from './image-handler.js';
 import { drawGrid, removeGrid } from './grid-handler.js';
 import { setupZoomAndPan } from './zoom-feature.js';
-import { updatePaperInstructions } from './paper-transport.js'; // Import the paper-transport functions
+import { updatePaperInstructions } from './paper-transport.js';
+import { initPaperDownload } from './paper-download.js';
+import { initSampleImageSelector } from './sample-image-selector.js';
 
 // Wait for DOM to be loaded
 document.addEventListener("DOMContentLoaded", function () {
@@ -11,7 +13,38 @@ document.addEventListener("DOMContentLoaded", function () {
     const removeGridBtn = document.getElementById("removeGridBtn");
     const downloadBtn = document.getElementById("downloadBtn");
     const zoomSliderContainer = document.getElementById("zoomSliderContainer");
+    const gridSizeInput = document.getElementById('gridSize');
     const resetZoomBtn = document.getElementById("resetZoomBtn");
+    const maxZoomLabel = zoomSliderContainer
+        .querySelector('.slider-labels span:last-child');
+
+    // Initialize the paper download functionality
+    initPaperDownload();
+
+    // Initialize the sample image selector
+    initSampleImageSelector((imageUrl) => {
+        // Reset button states when new image is selected
+        applyGridBtn.style.display = "block";
+        removeGridBtn.style.display = "none";
+        downloadBtn.style.display = "none";
+        zoomSliderContainer.style.display = "none";
+        resetZoomBtn.style.display = "none";
+
+        // Disable zoom functionality and reset zoom settings
+        zoomController.setZoomEnabled(false);
+        zoomController.resetZoom();
+
+        // Load the selected sample image
+        setImageFromUrl(imageUrl);
+    });
+
+    // initialize that zoo m label right away
+    maxZoomLabel.textContent = `${gridSizeInput.value}x`;
+
+    // keep label in sync whenever theres a new grid
+    gridSizeInput.addEventListener("input", () => {
+        maxZoomLabel.textContent = `${gridSizeInput.value}x`;
+    });
 
     // Setup zoom and pan functionality
     const zoomController = setupZoomAndPan();
@@ -31,6 +64,11 @@ document.addEventListener("DOMContentLoaded", function () {
         // Disable zoom functionality and reset zoom settings
         zoomController.setZoomEnabled(false);
         zoomController.resetZoom();
+
+        // Reset sample image selection
+        document.querySelectorAll('.sample-image-card').forEach(card => {
+            card.classList.remove('active');
+        });
 
         // Then handle the image upload
         handleImageUpload(event);

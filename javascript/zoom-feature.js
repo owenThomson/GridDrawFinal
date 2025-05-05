@@ -12,7 +12,6 @@ function setupZoomAndPan() {
     let startX;
     let startY;
     let zoomEnabled = false;
-    let maxZoom = 3; // Maximum zoom level
 
     // base scaled   dimensions
     let baseScaledWidth = 0;
@@ -116,16 +115,17 @@ function setupZoomAndPan() {
     zoomSlider.addEventListener('input', () => {
         if (!zoomEnabled) return;
 
-        // Convert slider value (0-100) to scale (1 to maxZoom)
-        const sliderValue = parseInt(zoomSlider.value);
-        zoomScale = 1.0 + ((sliderValue / 100) * (maxZoom - 1));
+        // Read the current grid count from the UI
+        const gridSize = parseInt(document.getElementById('gridSize').value) || 1;
 
-        // Set the slider tooltip
+        // Convert slider value (0-100) to a zoom scale from 1x up to gridSize x
+        const sliderValue = parseInt(zoomSlider.value);
+        zoomScale = 1.0 + ((sliderValue / 100) * (gridSize - 1));
+
+        // Update the tooltip
         document.getElementById('zoomValue').textContent = `${Math.round(zoomScale * 100)}%`;
 
-
-
-        // Redraw with new scale
+        // Redraw the image (and grid, if visible)
         redraw();
     });
 
@@ -197,6 +197,7 @@ function setupZoomAndPan() {
         resetZoom,
         setZoomEnabled,
         redraw
+
     };
 }
 

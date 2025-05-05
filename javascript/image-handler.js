@@ -2,6 +2,7 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 let img = new Image();
 
+
 /**
  * Shows welcome instructions when no image is loaded
  * steps to use the website
@@ -31,7 +32,7 @@ function showWelcomeInstructions() {
 
     // Step by step instructions
     const steps = [
-        '1. Click "Browse" on the left panel and choose an image',
+        '1. Upload an image or select a sample below',
         '2. Adjust your grid settings (count, thickness, color)',
         '3. Click "Apply Grid" to add a grid overlay',
         '4. Use the zoom slider to see details',
@@ -98,6 +99,17 @@ function handleImageUpload(event) {
 }
 
 /**
+ * Sets image source directly from URL
+ * Used for loading sample images
+ * @param {string} imageUrl - URL of image to load
+ */
+function setImageFromUrl(imageUrl) {
+    if (imageUrl) {
+        img.src = imageUrl;
+    }
+}
+
+/**
  * Downloads the current canvas content as PNG image
  * Shows an error if no image is loaded
  */
@@ -132,6 +144,7 @@ export {
     ctx,
     loadAndScaleImage,
     handleImageUpload,
+    setImageFromUrl,
     downloadImage,
     displayError
 };
