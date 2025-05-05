@@ -10,7 +10,7 @@ const sampleImages = [
         description: "Dino"
     },
     {
-        title: "Still Life",
+        title: "Dog",
         url: "preImage/Dog.jpg",
         description: "Dog"
     }
