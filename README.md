@@ -61,30 +61,6 @@ GridDraw works in all modern browsers with JavaScript enabled. For the best expe
 - Download the paper template for precise grid transfer
 - Use light pencil marks when drawing grid lines on paper
 
-## Project Structure
-
-```
-├── index.html              # Main application HTML
-├── styles.css              # CSS styles for the application
-├── images/                 # Image assets
-│   └── griddrawnew.png     # Logo image
-├── preImage/               # Sample images
-│   ├── Cat.jpg
-│   ├── Dino.jpg
-│   └── Dog.jpg
-├── javascript/             # JavaScript modules
-    ├── decimalToFraction.js # Utility for converting decimals to fractions
-    ├── grid-handler.js     # Grid overlay management
-    ├── gridMath.js         # Grid calculation utilities
-    ├── image-handler.js    # Image loading and processing
-    ├── paper-download.js   # Paper template generation
-    ├── paper-transport.js  # Paper measurement calculations
-    ├── sample-image-selector.js # Sample image management
-    ├── ui-controller.js    # Main UI control
-    ├── zoom-feature.js     # Zoom and pan functionality
-    └── zoomMath.js         # Zoom calculation utilities
-```
-
 ---
 
 GridDraw is the perfect tool for artists looking to improve their drawing accuracy and proportion skills using the classic grid method.
